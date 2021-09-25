@@ -19,4 +19,4 @@ COPY . /iframely
 
 USER iframely
 
-ENTRYPOINT [ "/iframely/docker/entrypoint.sh" ]
+CMD [ "node", "cluster.js" ]
