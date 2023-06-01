@@ -44,9 +44,10 @@ export default {
 
     provides: 'gmap',
 
-    mixins: [
-        "*",
-    ],
+    // https://github.com/itteco/iframely/issues/336
+    // mixins: [
+    //     "*",
+    // ],
 
     getMeta: function(gmap) {
         if (!/^place_id:/.test(gmap.q)) {
