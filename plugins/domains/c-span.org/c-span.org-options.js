@@ -1,6 +1,6 @@
-module.exports = {
+export default {
 
-    re: require('./c-span.org.js').re,
+    re: 'c-span.org',
 
     getData: function(url, options) {
         options.exposeStatusCode = true;

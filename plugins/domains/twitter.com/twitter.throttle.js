@@ -1,12 +1,12 @@
-module.exports = {
+export default {
 
-    re: require('./twitter.timelines').re.concat(require('./twitter.status').re),
+    re: ['twitter.status', 'twitter.timelines'],
 
-    provides: ["meta"],
+    provides: ["twitter_og"],
 
     getData: function(url, __statusCode, cb) {
         // if (__statusCode === 429 || __statusCode === 404 || __statusCode === 403 || __statusCode === 400) {
-            return cb(null, {meta: {}})
+            return cb(null, {twitter_og: {}})
         /* } else {
             return cb ({
                 responseStatusCode: __statusCode

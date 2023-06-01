@@ -1,12 +1,4 @@
-var _ = require('underscore');
-
-var ALLOWED_TYPES = {};
-
-_.values(CONFIG.T).forEach(function(v) {
-    ALLOWED_TYPES[v] = true;
-});
-
-module.exports = {
+export default {
 
     notPlugin: true,
 
@@ -53,7 +45,7 @@ module.exports = {
                     }
 
                     if (!hasMedia) {
-                        _.extend(link, media);
+                        Object.assign(link, media);
                     }
 
                     i++;
@@ -86,34 +78,48 @@ module.exports = {
         }
     },
 
-    parseMetaLinks: function(key, value, whitelistRecord) {
+    parseMetaLinks: function(key, value, whitelistRecord, appname) {
 
         if (typeof value !== "object" || typeof value === "string") {
             return [];
         }
 
         var rels = key.split(/\W+/);
-        if (_.intersection(rels, CONFIG.REL_GROUPS).length == 0) {
-            return [];
+        // Unique values.
+        rels = [...new Set(rels)];
+        // Filter empty.
+        rels = rels.filter(i => i);
+
+        if (!rels.some(rel => CONFIG.REL_GROUPS && CONFIG.REL_GROUPS.includes(rel))) {
+            if (whitelistRecord.isAllowed('iframely.app') 
+                && /iframely/i.test(key)
+                || (appname && key.indexOf(appname) === 0)) {
+                // Allow <link rel="iframely" ....
+                // With default rel of "app"
+                rels.push(CONFIG.R.app);
+            } else {
+                return [];
+            }
+        }
+
+        if (!/iframely/i.test(key) && appname && key.indexOf(appname) === 0) {
+            // Allow url = canonical and other validations
+            rels.push(CONFIG.R.iframely);
         }
 
         if (!(value instanceof Array)) {
             value = [value];
         }
 
-        value = value.filter(function(v) {
-            return v.type && v.type in ALLOWED_TYPES;
-        });
+        var ALLOWED_TYPES = Object.values(CONFIG.T);
 
-        // TODO: add media and rels to favicon and thumbnail plugins.
-        var EXISTING_PROVIDERS = ["icon", "thumbnail"];
-
-        if (rels.length == 1 && _.intersection(rels, EXISTING_PROVIDERS).length > 0) {
-            return [];
-        }
+        value = value.filter(
+            // Allow empty value for `text/html`.
+            v => !v.type || v.type && ALLOWED_TYPES.indexOf(v.type) > -1
+        );
 
         // Apply whitelist except for thumbnails.
-        if (rels.indexOf('thumbnail') === -1) {
+        if (rels.indexOf(CONFIG.R.thumbnail) === -1 && rels.indexOf(CONFIG.R.icon) === -1 && rels.indexOf(CONFIG.R.logo) === -1) {
             var tags = whitelistRecord.getQATags(rels);
             if (tags.indexOf('allow') === -1) {
                 return [];
@@ -128,10 +134,11 @@ module.exports = {
                 href: v.href,
                 title: v.title,
                 type: v.type,
-                rel: rels       // Validate REL?
+                rel: rels
             };
 
             var media = v.media;
+
             if (media) {
                 CONFIG.MEDIA_ATTRS.forEach(function(ma) {
                     var re = "(?:^|[^-])\\b" + ma + "\\s*:\\s*([\\d./:]+)(?:px)?\\b";

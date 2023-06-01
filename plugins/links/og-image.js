@@ -1,40 +1,34 @@
-var _ = require("underscore");
-
-var rel = [CONFIG.R.thumbnail, CONFIG.R.og];
-
-function getImageLinks(image) {
-
-    var images = [{
+export function getImageLinks(image, rel) {
+    var link = {
         href: image.url || image,
         type: image.type && /^image\//i.test(image.type) ? image.type : CONFIG.T.image,
-        rel: rel,
+        rel: [CONFIG.R.thumbnail, rel || CONFIG.R.og],
         width: image.width,
         height: image.height
-    }];
+    };
 
     if (image.secure_url) {
-        images.push({
-            href: image.secure_url,
-            type: image.type && /^image\//i.test(image.type) ? image.type : CONFIG.T.image,
-            rel: rel,
-            width: image.width,
-            height: image.height
-        });
+        var links = [{...link}];
+        link.href = image.secure_url;
+        links.push({...link});
+        return links;
+    } else {
+        return [link];
     }
-
-    return images;
 }
 
-module.exports = {
+export function getImageLinksFunc(el, index) {
+    return getImageLinks(el);
+}
+
+export default {
 
     getLinks: function(og) {
 
         if (og.image && og.image instanceof Array) {
-
-            return _.flatten(og.image.map(getImageLinks));
+            return og.image.map(getImageLinksFunc).flat();
 
         } else if (og.image) {
-
             return getImageLinks(og.image);
         }
     }

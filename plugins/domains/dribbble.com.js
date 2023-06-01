@@ -1,6 +1,6 @@
 const PROFILE_RE = /^https?:\/\/dribbble\.com\/([a-zA-Z0-9\-]+)(?:\?[^\/]+)?$/i;
 
-module.exports = {
+export default {
 
     re: [
         /^https?:\/\/dribbble\.com\/shots\/([a-zA-Z0-9\-]+)/i,
@@ -20,7 +20,7 @@ module.exports = {
 
         if (PROFILE_RE.test(url) || og.video || twitter.player || isGif) {
             // Wrap players into a promo card
-            meta.media = 'reader';
+            meta.medium = 'article';
         }
 
         return meta;
@@ -42,14 +42,17 @@ module.exports = {
 
 
             // Twitter player is broken on GIFs: https://dribbble.com/shots/4240497-Wisdo-apps-video-introduction
+            // 2022.07.05: Dribble player is broken now for all. IT comes with x-frame-option that allow only on Twitter.com
+            /*
             if (twitter.player && twitter.player.width && twitter.player.height) {
                 links.push({
                     href: twitter.player.value,
                     type: CONFIG.T.text_html,
-                    rel: [CONFIG.R.player, CONFIG.R.gifv, CONFIG.R.html5],
+                    rel: [CONFIG.R.player, CONFIG.R.gifv],
                     'aspect-ratio': twitter.player.width / twitter.player.height,
                 })
             }
+            */
         }
 
         return links;

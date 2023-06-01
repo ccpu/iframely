@@ -1,6 +1,4 @@
-const sysUtils = require('../../../logging')
-
-module.exports = {
+export default {
 
     re: [
         /^https?:\/\/(?:www\.)?youtube\.com\/(channel)\/([a-zA-Z0-9_-]+)/i,
@@ -12,7 +10,7 @@ module.exports = {
     provides: 'youtube_channel_gdata',
 
     // https://developers.google.com/youtube/v3/docs/channels/list
-    getData: function(url, urlMatch, request, options, cb) {
+    getData: function(url, urlMatch, request, log, options, cb) {
 
         var api_key = options.getProviderOptions('youtube.api_key');
 
@@ -67,7 +65,7 @@ module.exports = {
                     return cb(error);
                 }
 
-                if (data.items && data.items.length > 0) {
+                if (data && data.items && data.items.length > 0) {
 
                     var entry = data.items[0];
 
@@ -83,14 +81,14 @@ module.exports = {
                         youtube_channel_gdata: gdata
                     });
 
-                } else if (data.items && data.items.length == 0 || data.error && data.error.code == 404) {
+                } else if (data && (data.items && data.items.length == 0 || data.error && data.error.code == 404)) {
                     cb({responseStatusCode: 404});
                 } else {
                     /* Can be `data.pageInfo && data.pageInfo.totalResults === 0` 
                      * as if no channel found, but it actually exists.
                      * Ex.: https://www.youtube.com/c/Figmadesign
                      */
-                    sysUtils.log('YoutTube channel fallback for ' + url , data);
+                    log('YoutTube channel fallback for ' + url , data);
                     cb({
                         message: 'YouTube channel not found via data API...'
                         // But no response code. Let's fallback to default parsers

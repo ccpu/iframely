@@ -1,8 +1,6 @@
-var $ = require('cheerio');
-const querystring = require('querystring');
-const URL = require("url");
+import * as URL from "url";
 
-module.exports = {
+export default {
 
     re: [
         /^(https?:\/\/art19\.com\/shows\/[a-zA-Z0-9\-_]+\/episodes\/[a-zA-Z0-9\-_]+)/i,
@@ -14,68 +12,64 @@ module.exports = {
         "oembed-description",
         "og-image",
         "oembed-site",
-        "domain-icon"
+        "domain-icon",
+        "oembed-iframe"
     ],
 
-    getLink: function(oembed, options) {
+    getLink: function(iframe, options) {
 
-        if (oembed.html) {
+        var params = Object.assign(iframe.query);
 
-            var $container = $('<div>');
-            try {
-                $container.html(oembed.html);
-            } catch(ex) {}
+        var theme = options.getRequestOptions('players.theme', 'light');
+        params.theme = theme === 'light' ? 'light-gray-blue' : 'dark-blue';
 
-            var $iframe = $container.find('iframe');
+        var opts = {};
 
-            if ($iframe.length == 1) {
+        var horizontal = options.getRequestOptions('players.horizontal', true);
 
-                var player = $iframe.attr('src');
-                var params = URL.parse(player, true).query;
+        if (horizontal) {
+            delete params.type;
+            delete params.stretch;
 
-                var theme = options.getRequestOptions('players.theme', 'light');
+            if (options.redirectsHistory 
+                && /^https?:\/\/(?:www\.)?art19\.com\/shows\/[^\?]+\/embed\?/i.test(options.redirectsHistory[0])) {
+
+                var original = URL.parse(options.redirectsHistory[0], true);
+                params = original.query;
+                
+            } else {
+                var theme = options.getRequestOptions('players.theme', 'light');                    
                 params.theme = theme === 'light' ? 'light-gray-blue' : 'dark-blue';
 
-                var opts = {};
-
-                var horizontal = options.getRequestOptions('players.horizontal', true);
-
-                if (horizontal) {
-                    delete params.type;
-                    delete params.stretch;
-
-                    var theme = options.getRequestOptions('players.theme', 'light');                    
-                    params.theme = theme === 'light' ? 'light-gray-blue' : 'dark-blue';
-
-                    opts.theme = {
-                        label: CONFIG.L.theme,
-                        value: theme,
-                        values: {
-                            light: CONFIG.L.light,
-                            dark: CONFIG.L.dark
-                        }
-                    };
-                } else {
-                    params.type = 'artwork';
-                    params.stretch = true;
-                    delete params.theme;
-                }
-
-                opts.horizontal = {
-                    label: CONFIG.L.horizontal,
-                    value: horizontal
-                }
-
-                return {
-                    href: (/\?/.test(player) ? player.replace(/\?.+/, '?') : player + '?') + querystring.stringify(params),
-                    type: CONFIG.T.text_html,
-                    rel: [CONFIG.R.player, CONFIG.R.html5, CONFIG.R.oembed], // keep rel oembed here - it prevents validators from removing embed srcz
-                    media: horizontal ? {height: oembed.height, scrolling: 'no'} : {'aspect-ratio': 1},
-                    scrolling: 'no',
-                    options: opts
+                opts.theme = {
+                    label: CONFIG.L.theme,
+                    value: theme,
+                    values: {
+                        light: CONFIG.L.light,
+                        dark: CONFIG.L.dark
+                    }
                 };
             }
+
+        } else {
+            params.type = 'artwork';
+            params.stretch = true;
+            delete params.theme;
         }
+
+        opts.horizontal = {
+            label: CONFIG.L.horizontal,
+            value: horizontal
+        }
+
+        return {
+            href: iframe.assignQuerystring(params),
+            type: CONFIG.T.text_html,
+            rel: [CONFIG.R.player, CONFIG.R.oembed], // keep rel oembed here - it prevents validators from removing embed srcz
+            media: horizontal ? {height: iframe.height, scrolling: 'no'} : {'aspect-ratio': 1},
+            scrolling: 'no',
+            options: opts
+        };
     },
 
     tests: [{

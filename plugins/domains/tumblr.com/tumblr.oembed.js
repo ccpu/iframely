@@ -1,8 +1,8 @@
 /* Tumblr embed codes are broken as of Feb 13, 2020 */
 
-module.exports = {
+export default {
 
-    re: require('./tumblr.api').re,
+    re: 'tumblr.api',
 
     getLink: function(tumblr_post, oembed, options) {
 
@@ -15,7 +15,7 @@ module.exports = {
             return;
         }
 
-        var rel = [CONFIG.R.oembed, CONFIG.R.inline, CONFIG.R.html5];
+        var rel = [CONFIG.R.oembed, CONFIG.R.inline];
 
         if (!/http:\/\/embed\.tumblr\.com\/embed\//i.test(oembed.html)) { rel.push(CONFIG.R.ssl); }
         // We could also try to replace http:// with https://, 

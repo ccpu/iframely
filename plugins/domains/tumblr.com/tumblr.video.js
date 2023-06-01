@@ -1,8 +1,8 @@
-const $ = require('cheerio');
+import cheerio from 'cheerio';
 
-module.exports = {
+export default {
 
-    re: require('./tumblr.api').re, 
+    re: 'tumblr.api', 
 
     getLink: function(tumblr_post) {
 
@@ -24,7 +24,7 @@ module.exports = {
 
             var p = tumblr_post.player instanceof Array ? tumblr_post.player[0] : tumblr_post.player;
 
-            var $c = $('<div>').append(p.embed_code);
+            var $c = cheerio('<div>').append(p.embed_code);
             var $iframe = $c.find('iframe');
 
             if ($iframe.length) {

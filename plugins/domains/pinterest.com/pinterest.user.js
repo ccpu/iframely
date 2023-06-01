@@ -1,33 +1,25 @@
-module.exports = {
+export default {
 
     re: /^https?:\/\/(?:\w{2,3}\.)?pinterest(?:\.com?)?\.\w{2,3}\/((?!pin)[a-zA-Z0-9%_]+|pinterest)\/?(?:$|\?|#)/i,
 
     mixins: [
-        "og-image",
-        "favicon",
-        "canonical",
-        "og-description",
-        "og-site",
-        "og-title"
+        "*"
     ],    
 
-    getLink: function(url, meta, options) {
+    getLink: function(url, iframe, options) {
 
-        var og = meta.og;
-
-        if (/profile/.test(og.type) || // this check sometimes when Pinterest misses cache hits: og.type is 'website' in those cases
-            (meta.twitter && meta.twitter.app && meta.twitter.app.url && /\/user\//i.test(meta.twitter.app.url.iphone))) {
+        if (iframe.query?.grid) {
 
             var height = options.getRequestOptions('pinterest.height', options.maxHeight || 600);
-            var width = options.getRequestOptions('pinterest.width', options.maxWidth || 600);
+            var width = options.getRequestOptions('pinterest.width', options.getRequestOptions('maxwidth', 600));
             var pinWidth = options.getRequestOptions('pinterest.pinWidth', 120);
 
             return {
                 type: CONFIG.T.text_html,
-                rel: [CONFIG.R.app, CONFIG.R.ssl, CONFIG.R.inline, CONFIG.R.html5],
+                rel: [CONFIG.R.app, CONFIG.R.ssl, CONFIG.R.inline],
                 template: "pinterest.widget",
                 template_context: {
-                    url: og.url || url,
+                    url: url,
                     title: "Pinterest User",
                     type: "embedUser",
                     width: width,
@@ -51,7 +43,7 @@ module.exports = {
                         placeholder: 'ex.: 600, in px'
                     }
                 },
-                width: width,
+                'max-width': width, // inline HTML should have only height now
                 height: height + 120
             };
         }

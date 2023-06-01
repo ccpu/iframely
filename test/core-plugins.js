@@ -1,10 +1,10 @@
-var assert = require('chai').assert
+import { assert } from 'chai';
 
-global.CONFIG = require('../config');
+import CONFIG from '../config.loader.js';
 
-var iframely = require('../lib/core').getPluginData;
-var findWhitelistRecordFor = require('../lib/whitelist').findWhitelistRecordFor;
-var utils = require('../lib/utils');
+import { getPluginData as iframely } from '../lib/core.js';
+import { findWhitelistRecordFor as findWhitelistRecordFor } from '../lib/whitelist.js';
+import * as utils from '../lib/utils.js';
 
 function assertOembed(oembed) {
     assert.isObject(oembed);
@@ -53,7 +53,7 @@ describe('Core plugins', function() {
         var error, data;
         
         before(function(done) {
-            iframely("http://www.bbc.com/news/science-environment-23767323", 'meta', findWhitelistRecordFor, function(_error, _data) {
+            iframely("https://iframely.com", 'meta', findWhitelistRecordFor, function(_error, _data) {
                 error = _error;
                 data = _data;
                 done();
@@ -72,7 +72,7 @@ describe('Core plugins', function() {
             assert.property(data, 'og');
             assert.property(data, 'twitter');
             assert.property(data, 'canonical');
-            assert.property(data, 'alternate');
+            assert.property(data, 'charset');
             done();
         });
     });
@@ -106,7 +106,7 @@ describe('Core plugins', function() {
                 assert.equal(data.width, 400);
                 assert.equal(data.height, 211);
                 assert.equal(data.content_length, 33572);
-                assert.equal(data.format, "jpeg");
+                assert.equal(data.format, "jpg");
                 done();
             });
         });

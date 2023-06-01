@@ -1,6 +1,6 @@
-module.exports = {
+export default {
 
-    re: require('./usatoday.com').re,
+    re: 'usatoday.com',
 
     provides: '__allowEmbedURL',
 

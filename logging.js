@@ -1,6 +1,6 @@
-var moment = require('moment');
+import moment from 'moment';
 
-exports.log = function() {
+export default function log() {
     var args = Array.prototype.slice.apply(arguments);
 
     // Add ip if request provided.
@@ -13,7 +13,11 @@ exports.log = function() {
         }
     }
 
-    args.splice(0, 0, "--", moment().utc().format("\\[YY-MM-DD HH:mm:ss\\]:") + process.pid);
+    if (CONFIG.LOG_DATE_FORMAT) {
+        args.splice(0, 0, "--", moment().utc().format(CONFIG.LOG_DATE_FORMAT) + process.pid);
+    } else {
+        args.splice(0, 0, "--", "pid:" + process.pid);
+    }
 
     console.log.apply(console, args);
 };

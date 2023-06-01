@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     re: [
         /^https?:\/\/quizlet\.com\/(?:\w{2}\/)?(\d+)\/([^\/]+)\/?/i
@@ -15,7 +15,7 @@ module.exports = {
         return {
             href: 'https://quizlet.com/' + urlMatch[1]+ '/' + mode + '/embed',
             accept: CONFIG.T.text_html,
-            rel: [CONFIG.R.survey, CONFIG.R.html5, CONFIG.R.resizable],
+            rel: [CONFIG.R.survey, CONFIG.R.resizable],
             height: 500,
             options: {
                 mode: {
@@ -34,10 +34,7 @@ module.exports = {
 
     },
 
-    tests: [{
-        page: 'https://quizlet.com/subject/math/?sortBy=mostRecent',
-        selector: '.SetPreviewLink .UILinkBox-link .UILink'
-    },
+    tests: [
         "http://quizlet.com/43729824/conceptual-physics-final-review-part-1-flash-cards/",
         "https://quizlet.com/74274924/flashcards",
         "https://quizlet.com/141059966/learn",

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     re: /^https?:\/\/www\.nbcnews\.com\/(?:[a-z\-]+\/)?videos?\/[a-zA-Z0-9-]+\-(\d+)/i,
 
@@ -10,7 +10,7 @@ module.exports = {
 
         return {
             href: schemaVideoObject.embedURL || schemaVideoObject.embedurl,
-            rel: [CONFIG.R.player, CONFIG.R.html5],
+            rel: CONFIG.R.player,
             accept: CONFIG.T.text_html,
             "aspect-ratio": 560/315
         };

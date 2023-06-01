@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     re: /^https?:\/\/(?:\w{2,3}\.)?pinterest(?:\.com?)?\.\w{2,3}\/((?!pin)[a-zA-Z0-9%_]+|pinterest)\/([a-zA-Z0-9%\-]+)\/?(?:$|\?|#)/i,
 
@@ -7,22 +7,20 @@ module.exports = {
     ],
 
     // https://developers.pinterest.com/tools/widget-builder/?type=board
-    getLink: function(url, meta, options) {
-        var og = meta.og;
+    getLink: function(url, iframe, options) {
 
-        if (/pinboard/.test(og.type) || // this check sometimes when Pinterest misses cache hits: og.type is 'website' in those cases
-            (meta.twitter && meta.twitter.app && meta.twitter.app.url && /\/board\//i.test(meta.twitter.app.url.iphone))) {
+        if (iframe.query?.grid) {
 
             var height = options.getRequestOptions('pinterest.height', options.maxHeight || 600);
-            var width = options.getRequestOptions('pinterest.width', options.maxWidth || 600);
+            var width = options.getRequestOptions('pinterest.width', options.getRequestOptions('maxwidth', 600));
             var pinWidth = options.getRequestOptions('pinterest.pinWidth', 120);
 
             return {
                 type: CONFIG.T.text_html,
-                rel: [CONFIG.R.app, CONFIG.R.ssl, CONFIG.R.inline, CONFIG.R.html5],
+                rel: [CONFIG.R.app, CONFIG.R.ssl, CONFIG.R.inline],
                 template: "pinterest.widget",
                 template_context: {
-                    url: og.url || url,
+                    url: url,
                     title: "Pinterest Board",
                     type: "embedBoard",
                     width: width,
@@ -46,7 +44,7 @@ module.exports = {
                         placeholder: 'ex.: 600, in px'
                     }
                 },
-                width: width,
+                'max-width': width, // inline HTML should come only with height now
                 height: height + 120
             };
         }

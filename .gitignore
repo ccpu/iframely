@@ -16,4 +16,7 @@ lib/new/test.js
 
 iframely-private-plugins/
 config.providers.js
+
 scripts/data/*
+.vscode/launch.json
+.npmrc

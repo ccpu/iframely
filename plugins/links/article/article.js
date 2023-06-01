@@ -1,8 +1,6 @@
-var utils = require('../../../lib/utils');
+export default {
 
-module.exports = {
-
-    getData: function(readability, meta, __is_general_article) {
+    getData: function(readability, meta, __is_general_article, utils) {
 
         return {
             safe_html: utils.encodeText(meta.charset, readability.getHTML())

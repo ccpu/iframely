@@ -1,6 +1,7 @@
-const cheerio = require('cheerio');
+import cheerio from 'cheerio';
 
-module.exports = {
+
+export default {
 
     provides: [
         'schemaVideoObject', 
@@ -17,6 +18,10 @@ module.exports = {
                     || (ld.tvclip && (ld.tvclip.video || ld.tvclip.videoobject));
 
         if (json) {
+
+            if (Array.isArray(json) && json.length === 1) {
+                json = json[0];
+            }
 
             var video_src = json.embedurl || json.embedUrl || json.embedURL || json.contenturl || json.contentUrl || json.contentURL;
 
@@ -41,7 +46,6 @@ module.exports = {
                     }
                 }
             }
-
 
             var data = {
                 schemaVideoObject: json

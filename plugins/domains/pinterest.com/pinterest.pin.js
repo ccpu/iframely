@@ -1,30 +1,26 @@
 
-module.exports = {
+export default {
 
-    re: /^https?:\/\/(?:\w{2,3}\.)?pinterest(?:\.com?)?\.\w{2,3}\/pin\/(\d+)/i,
+    re: /^(https?:\/\/(?:\w{2,3}\.)?pinterest(?:\.com?)?\.\w{2,3})\/pin\/(?:[^\/]+\-)?(\d+)/i,
 
     mixins: [
-        "*",
-        "oembed-iframe"
+        "*"
     ],
 
     // https://developers.pinterest.com/tools/widget-builder/?type=pin&terse=true&size=large
-    getLink: function(url, meta, iframe, options) {
+    getLink: function(urlMatch, iframe, options) {
 
-        var og = meta.og;
-
-        if (/pin/.test(og.type) || // this check sometimes when Pinterest misses cache hits: og.type is 'website' in those cases
-            (meta.twitter && meta.twitter.app && meta.twitter.app.url && /\/pin\//i.test(meta.twitter.app.url.iphone))) {
+        if (iframe.query?.id) {
 
             // https://developers.pinterest.com/tools/widget-builder/?type=pin
             var hide_description = options.getRequestOptions('pinterest.hide_description', false);
 
             return {
                 type: CONFIG.T.text_html,
-                rel: [CONFIG.R.app, CONFIG.R.ssl, CONFIG.R.inline, CONFIG.R.html5],
+                rel: [CONFIG.R.app, CONFIG.R.ssl, CONFIG.R.inline],
                 template: "pinterest.widget",
                 template_context: {
-                    url: og.url || url,
+                    url: `${urlMatch[1]}/pin/${urlMatch[2]}`,
                     title: "Pinterest Image",
                     type: "embedPin",
                     width: null,
@@ -41,7 +37,7 @@ module.exports = {
                     }
                 },
                 */
-                'aspect-ratio': iframe.width && iframe.height > 96 ? iframe.width / (iframe.height - 96): 1/1,
+                'aspect-ratio': iframe.width && iframe.height ? iframe.width / iframe.height: 1/1,
                 'padding-bottom': 96,
                 'max-width': 600
             };
@@ -68,6 +64,8 @@ module.exports = {
         skipMethods: ['getData']
     },
         "https://www.pinterest.com/pin/99360735500167749/",
-        "https://www.pinterest.com/pin/211669251206627341/"
+        "https://www.pinterest.com/pin/211669251206627341/",
+        "https://www.pinterest.ca/pin/705024516672989568/",
+        "https://www.pinterest.ca/pin/oven-baked-spaghetti-bolognese--492649949494109/"
     ]
 };

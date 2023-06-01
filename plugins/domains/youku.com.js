@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     //http://v.youku.com/v_show/id_XNDkwNjg2NzQw.html?f=18736842
     re: [
@@ -12,7 +12,7 @@ module.exports = {
         return {
             href: "https://player.youku.com/embed/"+ urlMatch[1],
             type: CONFIG.T.text_html,
-            rel: [CONFIG.R.player, CONFIG.R.html5],
+            rel: CONFIG.R.player,
             "aspect-ratio": 16/10, //As stated it in docs
             autoplay: "autoplay=true"
         }

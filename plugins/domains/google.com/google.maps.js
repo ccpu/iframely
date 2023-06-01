@@ -1,7 +1,7 @@
 // Covers new google maps. Not classic ones. Classic ones are handled by maps.google.com.js plugin
 // Docs are at https://developers.google.com/maps/documentation/embed/guide
 
-module.exports = {
+export default {
 
     re: [
         // place 
@@ -112,7 +112,7 @@ module.exports = {
         var links = [{
             href: map,
             type: CONFIG.T.text_html,
-            rel: [CONFIG.R.app, CONFIG.R.ssl, CONFIG.R.html5],
+            rel: CONFIG.R.app,
             "aspect-ratio": eval(gmap.aspect.replace('x', '/')),
             options: {
                 zoom: {

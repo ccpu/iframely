@@ -1,8 +1,8 @@
-const decodeHTML5 = require('entities').decodeHTML5;
+import { decodeHTML5 } from 'entities';
 
-module.exports = {
+export default {
 
-    re: [].concat(require('./dailymail.embeddedvideo').re, require('./dailymail.galleryvideo').re),
+    re: ['dailymail.embeddedvideo', 'dailymail.galleryvideo'],
 
     provides: 'dailymailVideo',
 
@@ -10,7 +10,7 @@ module.exports = {
 
         var $player = cheerio((dailymailVideoID !== '' ? '#' + dailymailVideoID + ' ' : '' )+ 'video[data-opts]');
         // for galleries - it will be a single video on the page
-        
+
         if ($player.length == 1) {
             return {
                 dailymailVideo: JSON.parse(decodeHTML5($player.attr('data-opts')))
@@ -34,8 +34,8 @@ module.exports = {
         }, {
             // if something is undefined - let getLinks fail to fall back to default parsers
             href: dailymailVideo.plugins['social-share'].embedUrl, // no SSL
-            rel: [CONFIG.R.player, CONFIG.R.html5],
-            type: CONFIG.T.text_html,             
+            rel: CONFIG.R.player,
+            accept: CONFIG.T.text_html,             
             "aspect-ratio": 484 / 282, // taken from mp4 aspect
             "padding-bottom": 50 + 50 + 50,
             scrolling: 'no'
@@ -45,6 +45,6 @@ module.exports = {
     tests: [{
         noFeeds: true
     },
-        "https://www.dailymail.co.uk/tvshowbiz/article-2885993/A-look-unconventional-13-year-relationship-Helena-Bonham-Carter-Tim-Burton-movies-made.html#v-1467332342001"
+        "https://www.dailymail.co.uk/video/news/video-2895505/SVB-members-sets-bank-culture-apart-others.html"
     ]
 };

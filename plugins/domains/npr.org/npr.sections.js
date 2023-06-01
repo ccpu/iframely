@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     re: [
         /^https?:\/\/www\.npr\.org\/sections\//i,
@@ -10,7 +10,7 @@ module.exports = {
     getLink: function(cheerio) {
 
         var $button = cheerio('button[data-embed-url*="npr.org/player/embed/"]');
-        var rel = [CONFIG.R.player, CONFIG.R.audio, CONFIG.R.html5, CONFIG.R.app];
+        var rel = [CONFIG.R.player, CONFIG.R.audio, CONFIG.R.app];
 
         if ($button.length) {
             

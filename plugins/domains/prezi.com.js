@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     re: /^https:\/\/prezi\.com\/([a-z0-9\-_]+)\/[^\/]+\/(?:\?[^\/\?]+)?$/i,
 
@@ -16,7 +16,7 @@ module.exports = {
             return {
                 href: `https://prezi.com/embed/${urlMatch[1]}/`,
                 accept: CONFIG.T.text_html,
-                rel: [CONFIG.R.player, CONFIG.R.html5],
+                rel: CONFIG.R.player,
                 "aspect-ratio": 550 / 400
             }
         }

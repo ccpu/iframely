@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     re: /^https?:\/\/(?:[\w\-]+\.)?genius\.com\/(?!jobs)([a-zA-Z0-9\-]+)/i,
 
@@ -25,7 +25,7 @@ module.exports = {
                 (theme === 'dark' ? '?dark=1' : '') +'"></script>',
 
                 type: CONFIG.T.text_html,
-                rel: [CONFIG.R.reader, CONFIG.R.html5, CONFIG.R.ssl],
+                rel: [CONFIG.R.reader, CONFIG.R.ssl],
                 options: {
                     theme: {
                         label: CONFIG.L.theme,

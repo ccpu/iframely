@@ -1,6 +1,6 @@
-module.exports = {
+export default {
 
-    re: require('./spotify.com').re,
+    re: 'spotify.com',
 
     provides: ['meta'],
 
@@ -9,7 +9,7 @@ module.exports = {
             && /\/playlist\//.test(url)
             && options.getProviderOptions('spotify.ignore_errors', true)
 
-            || [500, 503, 502].includes(__statusCode)
+            || [500, 503, 502, 406, 403].includes(__statusCode)
             ) {
 
             return cb(null, {

@@ -1,8 +1,6 @@
-var logging = require('../../logging');
+export default {
 
-module.exports = {
-
-    getLink: function(oembedError, url, cb) {
+    getLink: function(oembedError, url, log, options, cb) {
 
         // https://developers.facebook.com/docs/graph-api/using-graph-api/error-handling/
         // Though the errors we actually need are not in the doc...
@@ -13,14 +11,15 @@ module.exports = {
             100: 404,  // https://developers.facebook.com/docs/graph-api/reference/oembed-video/
             901: 417,  // ./oembed-post/, ./oembed-page/
 
-            104: 415,            
+            104: 415, 
+            400: 403,  // Private Media            
             368: 451   // Temporary blocked
         }
 
         let result = {}; // When left empty - it allows a  fallback to generic parsers and get the accurate http code.
         const fbError = oembedError.body && oembedError.body.error || {};
 
-        const error = fbError.code 
+        var error = fbError.code 
                     && KNOWN_CODES[fbError.code] /* is defined */
                     ? KNOWN_CODES[fbError.code]
                     : null;
@@ -43,13 +42,23 @@ module.exports = {
                 "HEADS UP: Facebook & Instagram now require your own access_token configured. " 
                 + " See https://github.com/itteco/iframely/issues/284";
         } else if (isVideo && error === 404) {
-            result.message = "This video cannot be embedded."; 
-            // And fallback to generic
-        } else if (fbError.message && error !== 404) {
-            result.message = fbError.message;
+            result.message = "This video cannot be embedded.";
+            result.fallback = "generic";
+        } else if (fbError.error_subcode == 2207046) {
+            // Instagram's post with disabled embedding
+            result.message = "Owner has disabled embedding of this post";
+            result.fallback = "generic";
+        } else if (/endpoint must be reviewed and approved by Facebook/.test(oembedError?.body?.error?.message) 
+            && options.getProviderOptions('facebook.oembed_read_error_msg')
+            && /^887156172/.test(options.getProviderOptions('facebook.access_token'))) {
+
+            result.message = options.getProviderOptions('facebook.oembed_read_error_msg');
+
+        } else if ((fbError.error_user_msg || fbError.message) && error !== 404) {
+            result.message = fbError.error_user_msg || fbError.message;
         }
 
-        logging.log('Facebook oembed api - error getting oembed for', url, JSON.stringify(fbError), JSON.stringify(result));
+        log('Facebook oembed api - error getting oembed for', url, JSON.stringify(fbError), JSON.stringify(result));
 
         return cb(result);
     },

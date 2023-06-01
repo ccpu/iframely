@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
     getData: function(video_src) {
 
@@ -20,8 +20,6 @@ module.exports = {
 
     tests: [
         'http://audio.javascriptair.com/e/032-jsair-publishing-javascript-packages-with-john-david-dalton-stephan-bonnemann-james-kyle-and-henry-zhu/',
-        'http://www.cafecomvelocidade.com.br/e/para-que-serve-a-pre-temporada-da-formula-1-dos-dias-atuais/',
-        'http://conversaciones.elnuevodia.com/e/s3-ep-6-transparencia-en-tiempos-de-pandemia/',
         'https://www.bards.fm/e/bardsfm-interview-with-juan-o-savin/'
     ]
 

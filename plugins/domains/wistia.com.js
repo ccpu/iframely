@@ -1,12 +1,12 @@
-module.exports = {
+export default {
 
-    re: /^https?:\/\/([a-zA-Z0-9]+).wistia\.com\/medias\/([_a-zA-Z0-9]+)/i,
+    re: /^https?:\/\/([a-zA-Z0-9\-]+).wistia\.com\/medias\/([_a-zA-Z0-9]+)/i,    
 
     mixins: [
         "oembed-site",
         "oembed-title",
         "oembed-thumbnail",
-        "oembed-duration",
+        "oembed-duration"
     ],
 
     getMeta: function(oembed) {
@@ -35,7 +35,7 @@ module.exports = {
             return [{
                 href: "https://fast.wistia.net/embed/iframe/" + urlMatch[2] + params,
                 type: CONFIG.T.text_html,
-                rel: [CONFIG.R.player, CONFIG.R.html5],
+                rel: CONFIG.R.player,
                 "aspect-ratio": oembed.width / oembed.height,
                 autoplay: "autoPlay=true"
             }, icon];
@@ -44,7 +44,7 @@ module.exports = {
             return [{
                 html: oembed.html,
                 type: CONFIG.T.text_html,
-                rel: [CONFIG.R.player, CONFIG.R.audio, CONFIG.R.html5, CONFIG.R.ssl, CONFIG.R.inline],
+                rel: [CONFIG.R.player, CONFIG.R.audio, CONFIG.R.ssl, CONFIG.R.inline],
                 height: 218
             }, icon];
 
